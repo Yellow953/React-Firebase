@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { db } from "../config/firebase";
+import { db, auth } from "../config/firebase";
+import { signOut } from "firebase/auth";
 import {
   addDoc,
   collection,
@@ -29,12 +30,13 @@ function Movies() {
     }
   };
 
-  const handleCreateMovie = async () => {
+  const createMovie = async () => {
     try {
       await addDoc(moviesCollectionRef, {
         title: title,
         releaseDate: releaseDate,
         oscar: oscar,
+        userId: auth?.currentUser?.uid,
       });
       getMovieList();
     } catch (error) {
@@ -46,8 +48,17 @@ function Movies() {
     try {
       const movieDoc = doc(db, "movies", id);
       await deleteDoc(movieDoc);
+      getMovieList();
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const _signOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -57,6 +68,8 @@ function Movies() {
 
   return (
     <div>
+      <button onClick={_signOut}>Sign Out</button>
+
       <h1>Movies</h1>
 
       <div>
@@ -79,13 +92,11 @@ function Movies() {
           type="text"
           placeholder="Enter Movie Title"
           onChange={(e) => setTitle(e.target.value)}
-          className="form-control"
         />
         <input
           type="number"
           placeholder="Enter Release Year"
           onChange={(e) => setReleaseDate(Number(e.target.value))}
-          className="form-control"
         />
         <label>
           <input
@@ -97,7 +108,7 @@ function Movies() {
 
         <button
           className="btn"
-          onClick={handleCreateMovie}>
+          onClick={createMovie}>
           Create
         </button>
       </div>

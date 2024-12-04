@@ -26,14 +26,6 @@ function Auth() {
     }
   };
 
-  const _signOut = async () => {
-    try {
-      await signOut(auth);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   return (
     <div>
       <input
@@ -52,10 +44,6 @@ function Auth() {
       <hr />
 
       <button onClick={signInWithGoogle}>Sign In With Google</button>
-
-      <hr />
-
-      <button onClick={_signOut}>Sign Out</button>
     </div>
   );
 }
